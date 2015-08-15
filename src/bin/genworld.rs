@@ -1,5 +1,8 @@
 extern crate clap;
 extern crate lodepng;
+extern crate log4rs;
+#[macro_use]
+extern crate log;
 
 use clap::{Arg, App};
 
@@ -30,6 +33,8 @@ fn generate_world_image(filename: &str, width: usize, height: usize) {
 }
 
 fn main() {
+    log4rs::init_file("log4rs.toml", log4rs::toml::Creator::default()).unwrap();
+
     let matches = App::new("genworld")
         .version("0.1.0")
         .author("Graham Cox <graham@grahamcox.co.uk>")
@@ -68,6 +73,6 @@ fn main() {
         .ok()
         .expect("Height was not a valid number");
 
-    println!("Generating world of size {}x{} into {}", width, height, filename);
+    info!("Generating world of size {}x{} into {}", width, height, filename);
     generate_world_image(filename, width, height);
 }
