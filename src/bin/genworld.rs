@@ -1,5 +1,33 @@
 extern crate clap;
+extern crate lodepng;
+
 use clap::{Arg, App};
+
+/// Generate an image file to represent the world.
+/// This image file will always be in PNG format, and will represent one cell in the world
+/// as one pixel
+fn generate_world_image(filename: &str, width: usize, height: usize) {
+    let mut image: Vec<lodepng::RGB<u8>> = Vec::new();
+
+    for y in 0..height {
+        for x in 0..width {
+            let r: u8 = (255f32 * ((x as f32) / (width as f32))) as u8;
+            let g: u8 = (255f32 * ((y as f32) / (height as f32))) as u8;
+            let b: u8 = 0;
+
+            image.push(lodepng::RGB::<u8> {r: r, g: g, b: b});
+        }
+    }
+
+    lodepng::encode_file(filename,
+        &image[..],
+        width,
+        height,
+        lodepng::ColorType::LCT_RGB,
+        8)
+        .ok()
+        .expect("Failed to write file");
+}
 
 fn main() {
     let matches = App::new("genworld")
@@ -31,14 +59,15 @@ fn main() {
     let filename = matches.value_of("FILE").unwrap();
     let width = matches.value_of("WIDTH")
         .unwrap_or("10000")
-        .parse::<u32>()
+        .parse::<usize>()
         .ok()
         .expect("Width was not a valid number");
     let height = matches.value_of("HEIGHT")
         .unwrap_or("10000")
-        .parse::<u32>()
+        .parse::<usize>()
         .ok()
         .expect("Height was not a valid number");
 
     println!("Generating world of size {}x{} into {}", width, height, filename);
+    generate_world_image(filename, width, height);
 }
