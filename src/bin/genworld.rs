@@ -31,7 +31,8 @@ fn generate_world_image(filename: &str, width: usize, height: usize) {
         .ok()
         .expect("Failed to write file");
 }
-
+        
+#[allow(dead_code)]
 fn main() {
     log4rs::init_file("log4rs.toml", log4rs::toml::Creator::default()).unwrap();
 
